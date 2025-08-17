@@ -7,185 +7,108 @@
   <meta name="description" content="EasyMaker integra mantenimiento, compras y bodega para dar visibilidad y trazabilidad de repuestos en la industria." />
   <style>
     :root{
-      /* ===== Paleta negro/metal ===== */
-      --bg:#0a0a0c;            /* negro carbón */
-      --bg2:#0f1115;           /* grafito profundo */
-      --metal:#ccd3db;         /* metal claro */
-      --metal2:#9aa7b6;        /* metal medio */
-      --accent:#27ffd0;        /* turquesa EasyMaker / neón */
-      --accent2:#7affee;       /* brillo */
-      --stroke:#1b2130;        /* bordes sutiles */
-      --txt:#e9edf3;           /* texto principal */
-      --muted:#99a3b4;         /* texto tenue */
-      --grad: linear-gradient(90deg,#1e2a44 0%,#0f1a2e 45%,#0a0d14 100%);
+      --bg:#0a0a0c;
+      --accent:#27ffd0;
+      --accent2:#7affee;
+      --txt:#e9edf3;
+      --metal:#ccd3db;
+      --metal2:#9aa7b6;
+      --stroke:#1b2130;
     }
-    html,body{height:100%;margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:sans-serif}
 
-    /* ===================================================== */
-    /* PRELOADER: Tuerca en laberinto con look metal/neón   */
-    /* ===================================================== */
-    .preloader{position:fixed;inset:0;background:radial-gradient(1400px 800px at 80% 15%,#0d1320 0%,#0a0c12 55%,#000 100%);display:grid;place-items:center;z-index:9999;overflow:hidden}
-    .skip{position:absolute;right:14px;top:14px;font-size:12px;color:var(--metal);background:rgba(255,255,255,.03);border:1px solid var(--stroke);backdrop-filter:blur(4px);border-radius:999px;padding:.35rem .6rem;cursor:pointer}
-    .hint{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:var(--metal2);font-size:12px;opacity:.75}
-    .trailGlow{filter: drop-shadow(0 0 10px var(--accent2)) drop-shadow(0 0 24px var(--accent))}
-    @keyframes dash { to { stroke-dashoffset: 0; } }
+    /* ================= PRELOADER VIDEO ================= */
+    .preloader{position:fixed;inset:0;background:#000;display:grid;place-items:center;z-index:9999;overflow:hidden}
+    .preloader video{width:100%;height:100%;object-fit:cover}
+    .skip{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);color:#fff;border:1px solid var(--stroke);padding:.35rem .6rem;border-radius:999px;cursor:pointer;font-size:12px}
+    .hint{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:var(--metal2);font-size:12px}
 
-    /* ===================================================== */
-    /* LAYOUT                                                 */
-    /* ===================================================== */
-    header{display:flex;align-items:center;gap:.65rem;padding:18px 20px;background:#0b0e14;border-bottom:1px solid var(--stroke);position:sticky;top:0;z-index:5}
-    .brand{font-weight:800;letter-spacing:.3px;font-size:18px}
+    header{padding:16px 20px;background:#0b0e14;color:#fff;position:sticky;top:0;z-index:5;display:flex;align-items:center}
+    .brand{font-weight:800;font-size:18px}
     .brand b{color:var(--accent)}
-    .cta{margin-left:auto;background:linear-gradient(90deg,#1efccf,#6ffff0);color:#001018;border:0;border-radius:12px;padding:.6rem .9rem;font-weight:800;cursor:pointer}
 
-    /* ====== HERO con video ====== */
-    .hero{position:relative;min-height:72vh;display:grid;place-items:center;overflow:hidden;background:var(--grad)}
-    .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;filter:grayscale(.3) contrast(1.1) brightness(.8)}
-    .hero .overlay{position:absolute;inset:0;background:radial-gradient(1200px 600px at 15% 10%,#27ffd019 0%,transparent 55%)}
-    .hero .content{position:relative;text-align:center;padding:48px 20px;max-width:980px}
-    .hero h1{font-size:clamp(28px,4.2vw,56px);margin:0 0 10px;text-shadow:0 0 20px rgba(39,255,208,.15)}
-    .hero p{margin:0 0 22px;color:var(--metal)}
+    .hero{min-height:80vh;display:grid;place-items:center;text-align:center;padding:48px 20px;background:#0d0f15}
+    .hero h1{font-size:clamp(28px,4vw,52px);margin-bottom:10px}
+    .hero p{color:var(--metal);margin:0 0 22px}
+    .cta{background:linear-gradient(90deg,#1efccf,#6ffff0);color:#000;padding:.6rem 1rem;border:0;border-radius:10px;font-weight:700;cursor:pointer}
 
-    /* ====== GRID / CARDS ====== */
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;padding:40px 20px;max-width:1100px;margin:0 auto}
-    .card{background:linear-gradient(180deg,#0d1220,#0c1018);border:1px solid var(--stroke);border-radius:18px;padding:18px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
-    .card h3{margin:.2rem 0;color:#d9e6f7}
-    .card p{margin:.25rem 0;color:var(--metal);font-size:14px}
-
-    /* ====== DEMO VIDEOS ====== */
-    .videos{padding:10px 20px 50px;max-width:1200px;margin:0 auto}
-    .videos h2{margin:0 0 10px 0;text-align:center}
+    .videos{padding:40px 20px;max-width:1100px;margin:0 auto}
     .vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-    .vcard{position:relative;background:#0b0f16;border:1px solid var(--stroke);border-radius:16px;overflow:hidden}
-    .vcard video{width:100%;height:100%;display:block;background:#000}
-    .vmeta{position:absolute;left:12px;bottom:12px;background:rgba(10,14,20,.6);border:1px solid var(--stroke);backdrop-filter:blur(4px);color:var(--metal);font-size:12px;padding:.25rem .5rem;border-radius:8px}
+    .vcard{background:#0b0f16;border:1px solid var(--stroke);border-radius:16px;overflow:hidden}
+    .vcard video{width:100%;height:auto;display:block}
+    .vmeta{padding:8px;color:var(--metal);font-size:14px;text-align:center}
 
     footer{padding:40px 20px;text-align:center;color:var(--metal)}
-
-    @media (prefers-reduced-motion: reduce){ .preloader *{animation:none !important;transition:none !important} .hero video{display:none} }
   </style>
 </head>
 <body>
-  <!-- ================= PRELOADER ================= -->
-  <div class="preloader" role="status" aria-live="polite" aria-label="Cargando EasyMaker">
-    <button class="skip" id="skipBtn" aria-label="Saltar animación y continuar">Saltar</button>
-    <svg width="520" height="280" viewBox="0 0 520 280" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path id="mazePath" class="trailGlow" d="M20 260 H200 V60 H480 V200 H300 V120 H120 V220 H420" stroke="url(#g)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-      <g id="nut" class="trailGlow">
-        <polygon points="0,-12 10,-6 10,6 0,12 -10,6 -10,-6" fill="var(--accent)"/>
-        <circle r="4" fill="#0b0f1a" />
-      </g>
-      <g id="target" transform="translate(420,220)">
-        <circle r="10" fill="none" stroke="var(--accent)" stroke-width="3" opacity=".6">
-          <animate attributeName="r" values="8;12;8" dur="1.8s" repeatCount="indefinite"/>
-        </circle>
-        <circle r="4" fill="var(--accent)"/>
-      </g>
-      <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="520" y2="0" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#27ffd0"/>
-          <stop offset="1" stop-color="#7affee"/>
-        </linearGradient>
-      </defs>
-    </svg>
-    <div class="hint">Buscando repuestos…</div>
+  <!-- ================= PRELOADER CON VIDEO DE RECORRIDO ================= -->
+  <div class="preloader">
+    <button class="skip" id="skipBtn">Saltar</button>
+    <video id="preVideo" autoplay muted playsinline>
+      <source src="videos/video-portada-easymaker-1.mp4" type="video/mp4" />
+    </video>
+    <div class="hint">Cargando recorrido…</div>
   </div>
 
-  <!-- ================= HEADER ================= -->
   <header>
     <div class="brand">easy<b>maker</b></div>
-    <button class="cta" onclick="document.getElementById('contacto').scrollIntoView({behavior:'smooth'})">Contáctanos</button>
   </header>
 
-  <!-- ================= HERO con video de portada ================= -->
   <section class="hero">
-    <!-- Reemplaza la ruta por tu archivo real; debe estar en la carpeta /videos del repo -->
-    <video id="heroVideo" autoplay muted loop playsinline preload="metadata">
-      <source src="videos/video-portada-easymaker.mp4" type="video/mp4" />
-    </video>
-    <div class="overlay" aria-hidden="true"></div>
-    <div class="content">
+    <div>
       <h1>Rastrea y coordina tus repuestos</h1>
-      <p class="big">Visibilidad de mantenimiento, compras y bodega en un solo lugar. Estética negra & metal con acentos neón.</p>
-      <button class="cta" onclick="document.getElementById('beneficios').scrollIntoView({behavior:'smooth'})">Ver beneficios</button>
+      <p>Visibilidad de mantenimiento, compras y bodega en un solo lugar.</p>
+      <button class="cta" onclick="document.getElementById('videos').scrollIntoView({behavior:'smooth'})">Ver demos</button>
     </div>
   </section>
 
-  <!-- ================= BENEFICIOS ================= -->
-  <section id="beneficios" class="grid">
-    <article class="card"><h3>Anticipación</h3><p>Proyecta necesidades de mantención y repuestos.</p></article>
-    <article class="card"><h3>Coordinación</h3><p>Conecta mantenimiento, compras y bodega con trazabilidad.</p></article>
-    <article class="card"><h3>Planificación</h3><p>Plan visual de órdenes críticas y tareas.</p></article>
-    <article class="card"><h3>Catálogo</h3><p>Búsqueda eficiente de repuestos y proveedores.</p></article>
-  </section>
-
-  <!-- ================= DEMO / VIDEOS ================= -->
-  <section class="videos" aria-label="Demostraciones en video">
-    <h2>Demo del producto</h2>
+  <section id="videos" class="videos">
+    <h2 style="text-align:center">Demo del producto</h2>
     <div class="vgrid">
-      <figure class="vcard">
-        <video controls preload="metadata" playsinline poster="" id="v1">
+      <div class="vcard">
+        <video controls preload="metadata" playsinline>
           <source src="videos/video-portada-easymaker-1.mp4" type="video/mp4" />
         </video>
-        <figcaption class="vmeta">Planificación y trazabilidad</figcaption>
-      </figure>
-      <figure class="vcard">
-        <video controls preload="metadata" playsinline poster="" id="v2">
+        <div class="vmeta">Planificación y trazabilidad</div>
+      </div>
+      <div class="vcard">
+        <video controls preload="metadata" playsinline>
           <source src="videos/video-portada-easymaker-2.mp4" type="video/mp4" />
         </video>
-        <figcaption class="vmeta">Catálogo de repuestos</figcaption>
-      </figure>
-      <figure class="vcard">
-        <video controls preload="metadata" playsinline poster="" id="v3">
+        <div class="vmeta">Catálogo de repuestos</div>
+      </div>
+      <div class="vcard">
+        <video controls preload="metadata" playsinline>
           <source src="videos/video-portada-easymaker.mp4" type="video/mp4" />
         </video>
-        <figcaption class="vmeta">Coordinación integrada</figcaption>
-      </figure>
+        <div class="vmeta">Coordinación integrada</div>
+      </div>
     </div>
   </section>
 
-  <!-- ================= FOOTER ================= -->
-  <footer id="contacto">
-    <h2 style="margin:0 0 8px">¿Hablamos?</h2>
-    <div style="opacity:.85">Escríbenos a <a href="mailto:hola@easymaker.cl" style="color:#b8ffe6">hola@easymaker.cl</a></div>
+  <footer>
+    <h2>¿Hablamos?</h2>
+    <p>Escríbenos a <a href="mailto:hola@easymaker.cl" style="color:#b8ffe6">hola@easymaker.cl</a></p>
   </footer>
 
   <script>
-    // ======= Animación del preloader =======
-    const path = document.getElementById('mazePath');
-    const nut  = document.getElementById('nut');
-    const pre  = document.querySelector('.preloader');
-    const skip = document.getElementById('skipBtn');
-    const totalLen = path.getTotalLength();
-    path.style.strokeDasharray = totalLen;
-    path.style.strokeDashoffset = totalLen;
-    path.style.animation = 'dash 2.4s ease-out forwards';
+    const preloader = document.querySelector('.preloader');
+    const skipBtn = document.getElementById('skipBtn');
+    const preVideo = document.getElementById('preVideo');
 
-    let start = null, duration = 2600;
-    function animateNut(ts){
-      if(!start) start = ts;
-      const p = Math.min(1, (ts - start) / duration);
-      const pt = path.getPointAtLength(totalLen * p);
-      nut.setAttribute('transform', `translate(${pt.x},${pt.y}) rotate(${p*720})`);
-      if(p < 1) requestAnimationFrame(animateNut); else finish();
-    }
-    function finish(){
-      setTimeout(()=>{
-        pre.style.transition = 'opacity .5s ease';
-        pre.style.opacity = '0';
-        setTimeout(()=>pre.remove(), 520);
-      }, 300);
-    }
-    requestAnimationFrame(animateNut);
-    skip.addEventListener('click', ()=>{ pre.style.transition = 'opacity .25s ease'; pre.style.opacity = '0'; setTimeout(()=>pre.remove(), 260); });
-    setTimeout(()=>{ if(document.body.contains(pre)) skip.click(); }, 6000);
+    // Ocultar al terminar el video o al hacer skip
+    preVideo.addEventListener('ended', hidePreloader);
+    skipBtn.addEventListener('click', hidePreloader);
 
-    // ======= Mejora UX: pausar videos fuera de viewport =======
-    const vids = document.querySelectorAll('.videos video');
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(!e.isIntersecting && !e.target.hasAttribute('controls')) e.target.pause(); });
-    },{threshold:.15});
-    vids.forEach(v=>io.observe(v));
+    function hidePreloader(){
+      preloader.style.transition = 'opacity .6s ease';
+      preloader.style.opacity = '0';
+      setTimeout(()=> preloader.remove(), 600);
+    }
+
+    // Fallback: máximo 12s
+    setTimeout(()=>{if(document.body.contains(preloader)) hidePreloader()},12000);
   </script>
 </body>
 </html>
