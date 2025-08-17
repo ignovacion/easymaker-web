@@ -4,111 +4,199 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EasyMaker — Rastrea y coordina tus repuestos</title>
-  <meta name="description" content="EasyMaker integra mantenimiento, compras y bodega para dar visibilidad y trazabilidad de repuestos en la industria." />
+  <meta name="description" content="Plataforma minimal y veloz para coordinar mantenimiento, compras y bodega. Encuentra lo que necesitas en el menor tiempo." />
   <style>
     :root{
-      --bg:#0a0a0c;
-      --accent:#27ffd0;
-      --accent2:#7affee;
-      --txt:#e9edf3;
-      --metal:#ccd3db;
-      --metal2:#9aa7b6;
-      --stroke:#1b2130;
+      /* Paleta negro/metal con acento neón */
+      --bg:#0a0a0c; --panel:#0e1118; --stroke:#1b2130;
+      --txt:#e9edf3; --muted:#9aa3b6; --accent:#27ffd0; --accent2:#7affee;
     }
-    html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:sans-serif}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif}
 
-    /* ================= PRELOADER VIDEO ================= */
+    /* ===== PRELOADER: tuerca recorriendo camino (muy veloz) ===== */
     .preloader{position:fixed;inset:0;background:#000;display:grid;place-items:center;z-index:9999;overflow:hidden}
-    .preloader video{width:100%;height:100%;object-fit:cover}
-    .skip{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);color:#fff;border:1px solid var(--stroke);padding:.35rem .6rem;border-radius:999px;cursor:pointer;font-size:12px}
-    .hint{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:var(--metal2);font-size:12px}
+    .skip{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--stroke);padding:.32rem .55rem;border-radius:999px;cursor:pointer;font-size:12px}
+    .hint{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:#9aa3b6;font-size:12px}
+    .trailGlow{filter: drop-shadow(0 0 10px var(--accent2)) drop-shadow(0 0 24px var(--accent))}
+    @keyframes dash { to { stroke-dashoffset: 0; } }
 
-    header{padding:16px 20px;background:#0b0e14;color:#fff;position:sticky;top:0;z-index:5;display:flex;align-items:center}
-    .brand{font-weight:800;font-size:18px}
+    /* ===== GENERAL LAYOUT ===== */
+    header{padding:16px 20px;background:#0b0e14;color:#fff;position:sticky;top:0;z-index:5;display:flex;align-items:center;border-bottom:1px solid var(--stroke)}
+    .brand{font-weight:800;font-size:18px;letter-spacing:.3px}
     .brand b{color:var(--accent)}
+    .cta{margin-left:auto;background:linear-gradient(90deg,#1efccf,#6ffff0);color:#001015;padding:.6rem 1rem;border:0;border-radius:12px;font-weight:800;cursor:pointer}
 
-    .hero{min-height:80vh;display:grid;place-items:center;text-align:center;padding:48px 20px;background:#0d0f15}
-    .hero h1{font-size:clamp(28px,4vw,52px);margin-bottom:10px}
-    .hero p{color:var(--metal);margin:0 0 22px}
-    .cta{background:linear-gradient(90deg,#1efccf,#6ffff0);color:#000;padding:.6rem 1rem;border:0;border-radius:10px;font-weight:700;cursor:pointer}
+    .hero{min-height:66vh;display:grid;place-items:center;text-align:center;padding:72px 20px;background:radial-gradient(900px 520px at 12% 8%, #27ffd00f 0%, transparent 60%)}
+    .hero h1{font-size:clamp(28px,4.2vw,54px);margin:0 0 10px;text-wrap:balance}
+    .hero p{color:var(--muted);margin:0 0 20px}
 
-    .videos{padding:40px 20px;max-width:1100px;margin:0 auto}
-    .vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-    .vcard{background:#0b0f16;border:1px solid var(--stroke);border-radius:16px;overflow:hidden}
-    .vcard video{width:100%;height:auto;display:block}
-    .vmeta{padding:8px;color:var(--metal);font-size:14px;text-align:center}
+    /* Línea/recorrido visual que une secciones */
+    .path{position:relative;max-width:1100px;margin:0 auto;}
+    .path:before{content:"";position:absolute;left:calc(50% - 1px);top:0;bottom:0;width:2px;background:linear-gradient(#1b2130,#27ffd055,#1b2130)}
 
-    footer{padding:40px 20px;text-align:center;color:var(--metal)}
+    .section{padding:36px 20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;max-width:1100px;margin:0 auto}
+    .card{background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:18px}
+    .card h3{margin:.2rem 0}
+    .card p{margin:.25rem 0;color:var(--muted);font-size:14px}
+
+    /* Stepper (cómo funciona) */
+    .steps{max-width:900px;margin:0 auto;display:grid;gap:18px}
+    .step{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:start}
+    .badge{width:56px;height:56px;border-radius:14px;background:#0f1320;border:1px solid var(--stroke);display:grid;place-items:center;color:var(--accent);font-weight:800}
+    .step p{margin:.25rem 0;color:var(--muted)}
+
+    /* CTA final */
+    .strip{background:#0b0f16;border-top:1px solid var(--stroke);border-bottom:1px solid var(--stroke);padding:30px 20px;text-align:center}
+
+    footer{padding:36px 20px;text-align:center;color:var(--muted)}
+
+    /* Animaciones suaves al entrar */
+    [data-reveal]{opacity:0;transform:translateY(10px)}
+    .show{opacity:1;transform:none;transition:.5s ease}
+
+    @media (prefers-reduced-motion: reduce){ .preloader *{animation:none !important;transition:none !important} }
   </style>
 </head>
 <body>
-  <!-- ================= PRELOADER CON VIDEO DE RECORRIDO ================= -->
+  <!-- ===== PRELOADER RÁPIDO ===== -->
   <div class="preloader">
     <button class="skip" id="skipBtn">Saltar</button>
-    <video id="preVideo" autoplay muted playsinline>
-      <source src="videos/video-portada-easymaker-1.mp4" type="video/mp4" />
-    </video>
-    <div class="hint">Cargando recorrido…</div>
+    <svg width="560" height="240" viewBox="0 0 560 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path id="mazePath" class="trailGlow" d="M20 220 H220 V40 H520 V160 H340 V100 H140 V200 H460" stroke="url(#g)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <g id="nut" class="trailGlow">
+        <polygon points="0,-12 10,-6 10,6 0,12 -10,6 -10,-6" fill="var(--accent)"/>
+        <circle r="4" fill="#0b0f1a" />
+      </g>
+      <g transform="translate(460,200)">
+        <circle r="10" fill="none" stroke="var(--accent)" stroke-width="3" opacity=".6">
+          <animate attributeName="r" values="8;12;8" dur="1.2s" repeatCount="indefinite"/>
+        </circle>
+        <circle r="4" fill="var(--accent)"/>
+      </g>
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="560" y2="0" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#27ffd0"/>
+          <stop offset="1" stop-color="#7affee"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="hint">Encontrando la mejor ruta…</div>
   </div>
 
+  <!-- ===== CABECERA ===== -->
   <header>
     <div class="brand">easy<b>maker</b></div>
+    <button class="cta" onclick="document.getElementById('contacto').scrollIntoView({behavior:'smooth'})">Contáctanos</button>
   </header>
 
+  <!-- ===== HERO minimal ===== -->
   <section class="hero">
-    <div>
-      <h1>Rastrea y coordina tus repuestos</h1>
-      <p>Visibilidad de mantenimiento, compras y bodega en un solo lugar.</p>
-      <button class="cta" onclick="document.getElementById('videos').scrollIntoView({behavior:'smooth'})">Ver demos</button>
+    <div data-reveal>
+      <h1>Encuentra rápido. Coordina mejor.</h1>
+      <p>Visibilidad de mantenimiento, compras y bodega en un solo lugar. Sin fricción.</p>
+      <button class="cta" onclick="document.getElementById('beneficios').scrollIntoView({behavior:'smooth'})">Ver beneficios</button>
     </div>
   </section>
 
-  <section id="videos" class="videos">
-    <h2 style="text-align:center">Demo del producto</h2>
-    <div class="vgrid">
-      <div class="vcard">
-        <video controls preload="metadata" playsinline>
-          <source src="videos/video-portada-easymaker-1.mp4" type="video/mp4" />
-        </video>
-        <div class="vmeta">Planificación y trazabilidad</div>
+  <!-- ===== BENEFICIOS (tarjetas) ===== -->
+  <section id="beneficios" class="section">
+    <div class="grid path">
+      <article class="card" data-reveal>
+        <h3>Anticipación</h3>
+        <p>Proyecta necesidades de mantención y repuestos con señales tempranas.</p>
+      </article>
+      <article class="card" data-reveal>
+        <h3>Coordinación</h3>
+        <p>Conecta mantenimiento, compras y bodega con trazabilidad en cada paso.</p>
+      </article>
+      <article class="card" data-reveal>
+        <h3>Planificación crítica</h3>
+        <p>Plan visual y simple para las órdenes que no se pueden caer.</p>
+      </article>
+      <article class="card" data-reveal>
+        <h3>Catálogo inteligente</h3>
+        <p>Busca y encuentra proveedores y repuestos en segundos.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== CÓMO FUNCIONA (recorrido breve) ===== -->
+  <section class="section">
+    <div class="steps">
+      <div class="step" data-reveal>
+        <div class="badge">1</div>
+        <div>
+          <h3>Detecta</h3>
+          <p>Sensores, orden de trabajo o alerta humana: capturamos la señal crítica.</p>
+        </div>
       </div>
-      <div class="vcard">
-        <video controls preload="metadata" playsinline>
-          <source src="videos/video-portada-easymaker-2.mp4" type="video/mp4" />
-        </video>
-        <div class="vmeta">Catálogo de repuestos</div>
+      <div class="step" data-reveal>
+        <div class="badge">2</div>
+        <div>
+          <h3>Encuentra</h3>
+          <p>Catálogo y proveedores, stock y alternativas compatibles en un clic.</p>
+        </div>
       </div>
-      <div class="vcard">
-        <video controls preload="metadata" playsinline>
-          <source src="videos/video-portada-easymaker.mp4" type="video/mp4" />
-        </video>
-        <div class="vmeta">Coordinación integrada</div>
+      <div class="step" data-reveal>
+        <div class="badge">3</div>
+        <div>
+          <h3>Coordina</h3>
+          <p>Compras y bodega sincronizadas. Ruta clara para que la pieza llegue a tiempo.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <footer>
-    <h2>¿Hablamos?</h2>
-    <p>Escríbenos a <a href="mailto:hola@easymaker.cl" style="color:#b8ffe6">hola@easymaker.cl</a></p>
+  <!-- ===== CTA intermedio ===== -->
+  <div class="strip" data-reveal>
+    <strong>Si no tienes visibilidad, no tienes control.</strong>
+  </div>
+
+  <!-- ===== CONTACTO ===== -->
+  <footer id="contacto">
+    <h2 style="margin:0 0 8px">¿Hablamos?</h2>
+    <div style="opacity:.85">Escríbenos a <a href="mailto:hola@easymaker.cl" style="color:#b8ffe6">hola@easymaker.cl</a></div>
   </footer>
 
   <script>
-    const preloader = document.querySelector('.preloader');
-    const skipBtn = document.getElementById('skipBtn');
-    const preVideo = document.getElementById('preVideo');
+    // ===== Preloader ultra-rápido =====
+    const path = document.getElementById('mazePath');
+    const nut  = document.getElementById('nut');
+    const pre  = document.querySelector('.preloader');
+    const skip = document.getElementById('skipBtn');
 
-    // Ocultar al terminar el video o al hacer skip
-    preVideo.addEventListener('ended', hidePreloader);
-    skipBtn.addEventListener('click', hidePreloader);
+    const totalLen = path.getTotalLength();
+    path.style.strokeDasharray = totalLen;
+    path.style.strokeDashoffset = totalLen;
+    path.style.animation = 'dash 1.1s ease-out forwards'; // antes 2.4s → ahora más veloz
 
-    function hidePreloader(){
-      preloader.style.transition = 'opacity .6s ease';
-      preloader.style.opacity = '0';
-      setTimeout(()=> preloader.remove(), 600);
+    let start = null, duration = 1200; // ms (antes 2600)
+    function animateNut(ts){
+      if(!start) start = ts;
+      const p = Math.min(1, (ts - start) / duration);
+      const pt = path.getPointAtLength(totalLen * p);
+      nut.setAttribute('transform', `translate(${pt.x},${pt.y}) rotate(${p*540})`);
+      if(p < 1) requestAnimationFrame(animateNut); else finish();
     }
+    function finish(){
+      setTimeout(()=>{
+        pre.style.transition = 'opacity .38s ease';
+        pre.style.opacity = '0';
+        setTimeout(()=>pre.remove(), 400);
+        // Revela contenido
+        document.querySelectorAll('[data-reveal]').forEach(el=>el.classList.add('show'));
+      }, 60);
+    }
+    requestAnimationFrame(animateNut);
+    skip.addEventListener('click', ()=>{ pre.style.transition = 'opacity .2s ease'; pre.style.opacity = '0'; setTimeout(()=>{ pre.remove(); document.querySelectorAll('[data-reveal]').forEach(el=>el.classList.add('show')); }, 220); });
+    setTimeout(()=>{ if(document.body.contains(pre)) skip.click(); }, 3500);
 
-    // Fallback: máximo 12s
-    setTimeout(()=>{if(document.body.contains(preloader)) hidePreloader()},12000);
+    // Entrada suave al hacer scroll
+    const obs = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });
+    },{threshold:.15});
+    document.querySelectorAll('[data-reveal]').forEach(el=>obs.observe(el));
   </script>
 </body>
 </html>
