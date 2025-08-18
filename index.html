@@ -55,10 +55,29 @@
     .badge{width:56px;height:56px;border-radius:14px;background:#0f1320;border:1px solid var(--stroke);display:grid;place-items:center;color:var(--accent);font-weight:800}
     .step p{margin:.25rem 0;color:var(--muted)}
 
+    /* Imagen Laptop */
+    .laptop-section{display:flex;justify-content:center;align-items:center;margin:40px 0}
+    .laptop-section img{max-width:800px;width:100%;height:auto;display:block;box-shadow:0 4px 15px rgba(0,0,0,0.3);border-radius:8px}
+
     /* CTA final */
     .strip{background:#0b0f16;border-top:1px solid var(--stroke);border-bottom:1px solid var(--stroke);padding:30px 20px;text-align:center}
 
     footer{padding:36px 20px;text-align:center;color:var(--muted)}
+
+    /* ===== Formulario de contacto: campos 1 por línea ===== */
+    .contact-wrap{max-width:900px;margin:0 auto}
+    .contact-wrap h2{margin:0 0 8px}
+    .contact-wrap p{margin:0}
+    .form{margin:18px auto 0;max-width:760px;background:var(--panel);border:1px solid var(--stroke);border-radius:16px;padding:18px}
+    .form label{display:block;text-align:left;margin-bottom:12px}
+    .form label span{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    .form input,.form textarea{width:100%;background:#0c1118;border:1px solid #141a24;border-radius:12px;color:var(--txt);padding:.7rem .8rem;font:inherit;box-sizing:border-box}
+    .form textarea{min-height:120px;resize:vertical}
+    .form input:focus,.form textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(39,255,208,.12)}
+    .form .cta{margin-top:6px}
+    .form small{display:inline-block;margin-left:8px;color:var(--muted)}
+    .form-msg{margin-top:10px;color:var(--muted)}
+    @media (max-width:600px){ .form{padding:14px} }
 
     /* Animaciones suaves al entrar */
     [data-reveal]{opacity:0;transform:translateY(10px)}
@@ -107,6 +126,11 @@
         <p>Un solo sistema que alinea todas las áreas para lograr una planificación de mantenimiento sin errores ni urgencias.</p>
         <button class="cta" onclick="document.getElementById('quees').scrollIntoView({behavior:'smooth'})">Cómo funciona</button>
       </div>
+    </section>
+
+    <!-- ===== IMAGEN LAPTOP ===== -->
+    <section class="laptop-section node">
+      <img src="Laptop.png" alt="Vista previa Easymaker en Laptop" data-reveal>
     </section>
 
     <!-- ===== ¿QUÉ ES? ===== -->
@@ -191,8 +215,36 @@
 
   <!-- ===== CONTACTO ===== -->
   <footer id="contacto">
-    <h2 style="margin:0 0 8px">¿Hablamos?</h2>
-    <div style="opacity:.85">Escríbenos a <a href="mailto:hola@easymaker.cl" style="color:#b8ffe6">hola@easymaker.cl</a></div>
+    <div class="contact-wrap">
+      <h2>¿Hablamos?</h2>
+      <p style="opacity:.85">Escríbenos a <a href="mailto:hola@easymaker.cl" style="color:#b8ffe6">hola@easymaker.cl</a> o usa el formulario:</p>
+
+      <form id="contactForm" class="form" novalidate>
+        <label>
+          <span>Nombre y Apellido *</span>
+          <input type="text" name="nombre" required placeholder="Tu nombre" />
+        </label>
+        <label>
+          <span>Correo electrónico *</span>
+          <input type="email" name="correo" required placeholder="tu@empresa.com" />
+        </label>
+        <label>
+          <span>Teléfono celular</span>
+          <input type="tel" name="telefono" placeholder="+56 9 1234 5678" />
+        </label>
+        <label>
+          <span>Asunto</span>
+          <input type="text" name="asunto" placeholder="Consulta / Demo / Soporte" />
+        </label>
+        <label>
+          <span>Mensaje</span>
+          <textarea name="mensaje" rows="6" placeholder="Cuéntanos qué necesitas"></textarea>
+        </label>
+        <button class="cta" type="submit">Enviar</button>
+        <small>* Campos obligatorios</small>
+        <div id="formMsg" class="form-msg" role="status" aria-live="polite"></div>
+      </form>
+    </div>
   </footer>
 
   <script>
@@ -213,39 +265,4 @@
       const p = Math.min(1, (ts - start) / duration);
       const pt = path.getPointAtLength(totalLen * p);
       nut.setAttribute('transform', `translate(${pt.x},${pt.y}) rotate(${p*540})`);
-      if(p < 1) requestAnimationFrame(animateNut); else finish();
-    }
-    function finish(){
-      setTimeout(()=>{
-        pre.style.transition = 'opacity .34s ease';
-        pre.style.opacity = '0';
-        setTimeout(()=>pre.remove(), 360);
-        document.querySelectorAll('[data-reveal]').forEach(el=>el.classList.add('show'));
-      }, 40);
-    }
-    requestAnimationFrame(animateNut);
-    skip.addEventListener('click', ()=>{ pre.style.transition = 'opacity .2s ease'; pre.style.opacity = '0'; setTimeout(()=>{ pre.remove(); document.querySelectorAll('[data-reveal]').forEach(el=>el.classList.add('show')); }, 220); });
-    setTimeout(()=>{ if(document.body.contains(pre)) skip.click(); }, 3000);
-
-    // ===== Recorrido central crece con el scroll =====
-    const wrap = document.getElementById('ruta');
-    function updateProgress(){
-      const r = wrap.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const total = r.height - vh * 0.2; // margen para no llegar al 100% tan pronto
-      const passed = Math.min(Math.max(vh*0.3 - r.top, 0), total);
-      const p = total>0 ? passed/total : 0;
-      document.documentElement.style.setProperty('--progress', p);
-    }
-    updateProgress();
-    window.addEventListener('scroll', updateProgress, {passive:true});
-    window.addEventListener('resize', updateProgress);
-
-    // Entrada suave al hacer scroll
-    const obs = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });
-    },{threshold:.15});
-    document.querySelectorAll('[data-reveal]').forEach(el=>obs.observe(el));
-  </script>
-</body>
-</html>
+      if(p < 1) requestAnimationFrame(animate
