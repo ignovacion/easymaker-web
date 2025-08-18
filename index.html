@@ -34,9 +34,9 @@
     /* ============ Recorrido central que acompaña todo ============ */
     .pathWrap{position:relative}
     .pathWrap:before{
-      content:"";position:absolute;left:calc(50% - 1px);top:0;width:2px;height:100%;
+      content:"";position:absolute;left:50%;top:0;width:2px;height:100%;
       background:linear-gradient(#1b2130,#27ffd055,#1b2130);
-      transform-origin: top; transform: scaleY(var(--progress)); /* crece con el scroll */
+      transform-origin: top; transform: translateX(-50%) scaleY(var(--progress)); /* centrado perfecto también en móvil */
     }
 
     .section{padding:48px 20px}
@@ -47,7 +47,7 @@
 
     /* Hitos de la ruta (nodos) */
     .node{position:relative;max-width:1100px;margin:0 auto}
-    .node:before{content:"";position:absolute;left:calc(50% - 6px);top:-8px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent2)}
+    .node:before{content:"";position:absolute;left:50%;top:-8px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent2);transform:translateX(-50%)}
 
     /* Stepper (cómo funciona) */
     .steps{max-width:900px;margin:0 auto;display:grid;gap:18px}
@@ -207,7 +207,7 @@
     path.style.strokeDashoffset = totalLen;
     path.style.animation = 'dash 1.0s ease-out forwards';
 
-    let start = null, duration = 2000; // ms
+    let start = null, duration = 1100; // ms
     function animateNut(ts){
       if(!start) start = ts;
       const p = Math.min(1, (ts - start) / duration);
