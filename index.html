@@ -55,6 +55,10 @@
     .badge{width:56px;height:56px;border-radius:14px;background:#0f1320;border:1px solid var(--stroke);display:grid;place-items:center;color:var(--accent);font-weight:800}
     .step p{margin:.25rem 0;color:var(--muted)}
 
+    /* Imagen Laptop */
+    .laptop-section{display:flex;justify-content:center;align-items:center;margin:40px 0}
+    .laptop-section img{max-width:800px;width:100%;height:auto;display:block;box-shadow:0 4px 15px rgba(0,0,0,0.3);border-radius:8px}
+
     /* CTA final */
     .strip{background:#0b0f16;border-top:1px solid var(--stroke);border-bottom:1px solid var(--stroke);padding:30px 20px;text-align:center}
 
@@ -122,6 +126,11 @@
         <p>Un solo sistema que alinea todas las áreas para lograr una planificación de mantenimiento sin errores ni urgencias.</p>
         <button class="cta" onclick="document.getElementById('quees').scrollIntoView({behavior:'smooth'})">Cómo funciona</button>
       </div>
+    </section>
+
+    <!-- ===== IMAGEN LAPTOP ===== -->
+    <section class="laptop-section node">
+      <img src="Laptop.png" alt="Vista previa Easymaker en Laptop" data-reveal>
     </section>
 
     <!-- ===== ¿QUÉ ES? ===== -->
@@ -239,45 +248,65 @@
   </footer>
 
   <script>
-    // ===== Preloader ultra-rápido =====
+  window.addEventListener('DOMContentLoaded', () => {
+    // ===== Preloader ultra-rápido y robusto =====
     const path = document.getElementById('mazePath');
     const nut  = document.getElementById('nut');
     const pre  = document.querySelector('.preloader');
     const skip = document.getElementById('skipBtn');
 
-    const totalLen = path.getTotalLength();
-    path.style.strokeDasharray = totalLen;
-    path.style.strokeDashoffset = totalLen;
-    path.style.animation = 'dash 1.0s ease-out forwards';
+    const MAX_PRELOAD_MS = 4000;   // Fallback por si algo falla
+    const FADE_OUT_MS     = 340;   // Duración del fade-out
 
-    let start = null, duration = 2500; // ms
-    function animateNut(ts){
-      if(!start) start = ts;
-      const p = Math.min(1, (ts - start) / duration);
-      const pt = path.getPointAtLength(totalLen * p);
-      nut.setAttribute('transform', `translate(${pt.x},${pt.y}) rotate(${p*540})`);
-      if(p < 1) requestAnimationFrame(animateNut); else finish();
+    function revealContent() {
+      document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('show'));
     }
-    function finish(){
-      setTimeout(()=>{
-        pre.style.transition = 'opacity .34s ease';
-        pre.style.opacity = '0';
-        setTimeout(()=>pre.remove(), 360);
-        document.querySelectorAll('[data-reveal]').forEach(el=>el.classList.add('show'));
-      }, 40);
+    function hidePreloader() {
+      if (!pre || !document.body.contains(pre)) return;
+      pre.style.transition = `opacity ${FADE_OUT_MS}ms ease`;
+      pre.style.opacity = '0';
+      setTimeout(() => { if (pre && pre.parentNode) pre.parentNode.removeChild(pre); }, FADE_OUT_MS + 40);
+      revealContent();
     }
-    requestAnimationFrame(animateNut);
-    skip.addEventListener('click', ()=>{ pre.style.transition = 'opacity .2s ease'; pre.style.opacity = '0'; setTimeout(()=>{ pre.remove(); document.querySelectorAll('[data-reveal]').forEach(el=>el.classList.add('show')); }, 220); });
-    setTimeout(()=>{ if(document.body.contains(pre)) skip.click(); }, 3000);
+
+    // Botón "Saltar"
+    skip?.addEventListener('click', hidePreloader);
+
+    try {
+      const totalLen = path.getTotalLength();
+      path.style.strokeDasharray  = totalLen;
+      path.style.strokeDashoffset = totalLen;
+      path.style.animation = 'dash 1.0s ease-out forwards';
+
+      let start = null;
+      const duration = 2500; // ms (ajusta la velocidad aquí)
+
+      function animateNut(ts){
+        if(!start) start = ts;
+        const p  = Math.min(1, (ts - start) / duration);
+        const pt = path.getPointAtLength(totalLen * p);
+        nut.setAttribute('transform', `translate(${pt.x},${pt.y}) rotate(${p*540})`);
+        if (p < 1) requestAnimationFrame(animateNut);
+        else hidePreloader();
+      }
+
+      requestAnimationFrame(animateNut);
+    } catch (e) {
+      console.error('Preloader fallback:', e);
+      hidePreloader();
+    }
+
+    // Fallback por tiempo máximo
+    setTimeout(hidePreloader, MAX_PRELOAD_MS);
 
     // ===== Recorrido central crece con el scroll =====
     const wrap = document.getElementById('ruta');
     function updateProgress(){
       const r = wrap.getBoundingClientRect();
       const vh = window.innerHeight;
-      const total = r.height - vh * 0.2; // margen para no llegar al 100% tan pronto
+      const total  = r.height - vh * 0.2;             // margen para no llegar al 100% tan pronto
       const passed = Math.min(Math.max(vh*0.3 - r.top, 0), total);
-      const p = total>0 ? passed/total : 0;
+      const p = total > 0 ? passed / total : 0;
       document.documentElement.style.setProperty('--progress', p);
     }
     updateProgress();
@@ -287,8 +316,9 @@
     // Entrada suave al hacer scroll
     const obs = new IntersectionObserver((entries)=>{
       entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });
-    },{threshold:.15});
-    document.querySelectorAll('[data-reveal]').forEach(el=>obs.observe(el));
+    }, { threshold: .15 });
+    document.querySelectorAll('[data-reveal]').forEach(el => obs.observe(el));
+
     // ===== Formulario: crea un mailto a hola@easymaker.cl =====
     const form = document.getElementById('contactForm');
     const formMsg = document.getElementById('formMsg');
@@ -310,7 +340,5 @@
       window.location.href = mailto;
       formMsg.textContent = 'Abriendo tu correo para enviar el mensaje…';
     });
-
-  </script>
-</body>
-</html>
+  });
+</script>
