@@ -92,6 +92,15 @@
     /* Fuerza centrado absoluto de la imagen de laptop en pantallas grandes */
     .laptop-section{display:flex; justify-content:center; align-items:center; margin:40px 0; width:100%; text-align:center}
     .laptop-section img{width:min(90vw, 900px); height:auto; margin:0 auto; display:block; box-shadow:0 4px 15px rgba(0,0,0,.3); border-radius:8px}
+      /* ===== Créditos y ajustes móviles ===== */
+    .credits{padding:14px 20px;text-align:center;color:var(--muted);border-top:1px solid var(--stroke);background:#0a0d12}
+    .credits a{color:var(--accent);text-decoration:none}
+    .credits a:hover{text-decoration:underline}
+
+    /* Ocultar puntos/nodos del camino en móvil para limpiar la lectura */
+    @media (max-width: 640px){
+      .node:before{display:none}
+    }
   </style>
 </head>
 <body>
@@ -260,6 +269,11 @@
     </div>
   </footer>
 
+  <!-- ===== Créditos ===== -->
+  <div class="credits">
+    Diseño & desarrollo web — <a href="https://www.ignovacion.com" target="_blank" rel="noopener">ignovacion.com</a>
+  </div>
+
   <script>
   window.addEventListener('DOMContentLoaded', () => {
     // ===== Preloader ultra-rápido y robusto =====
@@ -292,7 +306,7 @@
       path.style.animation = 'dash 1.0s ease-out forwards';
 
       let start = null;
-      const duration = 1500; // ms (ajusta la velocidad aquí)
+      const duration = 2500; // ms (ajusta la velocidad aquí)
 
       function animateNut(ts){
         if(!start) start = ts;
