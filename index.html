@@ -207,7 +207,7 @@
     path.style.strokeDashoffset = totalLen;
     path.style.animation = 'dash 1.0s ease-out forwards';
 
-    let start = null, duration = 1100; // ms
+    let start = null, duration = 2500; // ms
     function animateNut(ts){
       if(!start) start = ts;
       const p = Math.min(1, (ts - start) / duration);
